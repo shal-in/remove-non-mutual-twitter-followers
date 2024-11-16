@@ -37,7 +37,6 @@
     });
   };
 
-  // Function to remove a single follower
   const remove = async (followerEl) => {
     const element = followerEl.querySelector('[aria-label^="Follow "]');
     if (element) {
@@ -47,7 +46,7 @@
       const moreButton = followerEl.querySelector($moreButton);
       if (moreButton) {
         moreButton.click();
-        await sleep({ seconds: 0.5 }); // Reduced sleep time
+        await sleep({ seconds: 0.5 });
 
         const removeFollowerButton = document.querySelector($removeFollowerButton);
         if (removeFollowerButton) {
@@ -74,24 +73,22 @@
     }
   };
 
-  // Function to process the next batch of followers
   const nextBatch = async () => {
     const followersListEl = document.querySelector('[aria-label="Timeline: Followers"]');
     const followersEls = followersListEl ? followersListEl.querySelectorAll('[data-testid="UserCell"]') : [];
     const moreFollowersFound = followersEls.length > 0;
 
     if (moreFollowersFound) {
-      const removalPromises = []; // Array to store promises for parallel execution
+      const removalPromises = [];
       for (const followerEl of followersEls) {
-        removalPromises.push(remove(followerEl)); // Add each remove operation to the array
+        removalPromises.push(remove(followerEl));
       }
 
-      // Run all removals concurrently
       await Promise.all(removalPromises);
       
       scrollToTheBottom();
-      await sleep({ seconds: 1 }); // Slight delay to allow for scroll
-      return nextBatch();  // Process the next batch concurrently
+      await sleep({ seconds: 1 });
+      return nextBatch();
     } else {
       addNewRetry();
     }
@@ -101,8 +98,8 @@
       console.log(`RELOAD PAGE AND RE-RUN SCRIPT IF ANY WERE MISSED`);
     } else {
       scrollToTheBottom();
-      await sleep({ seconds: 1 });  // Slight delay to allow for scroll
-      return nextBatch();  // Continue to the next batch
+      await sleep({ seconds: 1 });
+      return nextBatch();
     }
   };
 
